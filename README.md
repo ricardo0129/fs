@@ -24,6 +24,8 @@ Retrieving algorithms I use such as finding my implementation of network flow to
 	  - If a file is deleted in the disk then delete in the filesystem 
 	  - So in general have the fs be updated periodically (Through my usage most files don't change too often)
 	  - Keep a directory tree, and be able to change nodes. For example if I want to move a directory elsewhere but keep it in my system
+	- Store all catagories and be able to add them to new Files added 
+	  - Eg. create new Solution -> choose catagories from a list [dp, graph, geometry] or add a new catagory
 
 
 ### Specifications
