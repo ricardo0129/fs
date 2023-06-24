@@ -1,73 +1,13 @@
-struct Page {
-    file_name: String,
-    path: String,
-    description: String,
-    attributes: Vec<String>,
-}
-
-impl Page {
-    fn new(file_name: String, path: String, description: String) -> Self {
-        Self {
-            file_name: file_name,
-            path: path,
-            description: description,
-            attributes: vec![],
-        }
-    }
-
-    fn contains_category(&self, category: &String) -> bool {
-        self.attributes.contains(&category)
-    }
-
-    fn add_category(&mut self, category: String) {
-        if !self.contains_category(&category) {
-            self.attributes.push(category);
-        }
-    }
-
-    fn get_description(&self) -> String {
-        self.description.clone()
-    }
-
-    fn get_contents(&self) -> String {
-        if let Some(contents) = read_file(&self.path) {
-            return contents;
-        } else {
-            eprintln!("File is missing");
-            return String::new();
-        }
-    }
-}
-use std::env;
-use std::fs::File;
+pub mod page;
+pub mod string_ds;
+pub mod tree;
 use std::io;
-use std::io::Read;
-use std::path::PathBuf;
 
-fn get_current_working_dir() -> std::io::Result<PathBuf> {
-    env::current_dir()
-}
+use crate::page::Page;
 
-fn read_file(path: &String) -> Option<String> {
-    let p = "src/waif.cpp";
-    println!("{}-{}", p, path);
-    println!("{}", path);
-    match File::open(path) {
-        Ok(mut file) => {
-            let mut contents = String::new();
-            match file.read_to_string(&mut contents) {
-                Ok(_) => Some(contents),
-                Err(_) => None,
-            }
-        }
-        Err(_) => None,
-    }
-}
+use std::collections::HashMap;
 
-fn main() {
-    let pathbuff = get_current_working_dir().unwrap();
-    //println!("{}", pathbuff.to_str().unwrap());
-    //let v = read_file(&"src/waif.cpp".to_string()).unwrap();
+fn add_page() {
     let mut file_name = String::new();
     println!("Add new Solution");
     println!("File Name?");
@@ -79,6 +19,33 @@ fn main() {
     io::stdin()
         .read_line(&mut file_path)
         .expect("Failed to read input");
+    file_path = file_path.trim_end().to_string();
     let new_page = Page::new(file_name, file_path, "test".to_string());
     println!("{}", new_page.get_contents());
 }
+
+fn menu() {
+    let mut menu: HashMap<String, fn()> = HashMap::new();
+    menu.insert(String::from("add page"), add_page);
+    loop {
+        println!("Avail Commands");
+        for key in menu.keys() {
+            println!("{}", key);
+        }
+        let mut input = String::new();
+
+        match io::stdin().read_line(&mut input) {
+            Ok(_) => {
+                let trimmed_input = input.trim();
+                if let Some(command) = menu.get(trimmed_input) {
+                    command();
+                } else {
+                    println!("Invalid command.");
+                }
+            }
+            Err(error) => println!("Error: {}", error),
+        }
+    }
+}
+
+fn main() {}
